@@ -59,8 +59,8 @@ public class FCardImageRenderer {
         reminderHidePattern = Pattern.compile(" \\((.+?)\\)");
         symbolPattern = Pattern.compile("\\{([A-Z0-9]+)\\}|\\{([A-Z0-9]+)/([A-Z0-9]+)\\}");
 
-        NAME_FONT = new Font(Font.SERIF, Font.BOLD, 26);
-        TYPE_FONT = new Font(Font.SERIF, Font.BOLD, 22);
+        NAME_FONT = new Font("JaceBeleren", Font.BOLD, 28);
+        TYPE_FONT = new Font("JaceBeleren", Font.BOLD, 24);
         if ("ja-JP".equals(FModel.getPreferences().getPref(FPref.UI_LANGUAGE)) || "zh-CN".equals(FModel.getPreferences().getPref(FPref.UI_LANGUAGE))) {
             TEXT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 24);
             REMINDER_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 22);
@@ -69,12 +69,12 @@ public class FCardImageRenderer {
                 TEXT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 24);
                 REMINDER_FONT = new Font(Font.SANS_SERIF, Font.ITALIC, 24);
             } else {
-                TEXT_FONT = new Font(Font.SERIF, Font.PLAIN, 24);
-                REMINDER_FONT = new Font(Font.SERIF, Font.ITALIC, 24);
+                TEXT_FONT = new Font("MPlantin", Font.PLAIN, 24);
+                REMINDER_FONT = new Font("MPlantin-Italic", Font.ITALIC, 24);
             }
         }
         PT_FONT = NAME_FONT;
-        ARTIST_FONT = new Font(Font.SERIF, Font.BOLD, 20);
+        ARTIST_FONT = new Font("Beleren Small Caps", Font.BOLD, 12);
 
         float screenScale = GuiBase.getInterface().getScreenScale();
         int arrayMultiplier = Math.round(2 * screenScale);
@@ -671,7 +671,7 @@ public class FCardImageRenderer {
         x += padding;
         w -= 2 * padding;
         drawVerticallyCenteredString(g, CardTranslation.getTranslatedName(state.getName()),
-            new Rectangle(x, y, w, h), NAME_FONT, NAME_SIZE);
+            new Rectangle(x, y+5, w, h), NAME_FONT, NAME_SIZE);
     }
 
 
@@ -722,7 +722,7 @@ public class FCardImageRenderer {
         if (drawRarity) {
             int iconSize = Math.round(h * 0.9f);
             int iconPadding = (h - iconSize) / 2;
-            w -= iconSize + iconPadding * 2;
+            w -= iconSize + iconPadding * 2 + 5;
             if (state.getRarity() == null) {
                 FSkin.drawImage(g, FSkin.getImage(FSkinProp.IMG_SETLOGO_SPECIAL), x + w + iconPadding, y + (h - iconSize + 1) / 2, iconSize, iconSize);
             } else if (state.getRarity() == CardRarity.Special ) {
@@ -744,7 +744,7 @@ public class FCardImageRenderer {
         // check for shared type line
         if (!state.getType().hasStringType("Room") || state.getState() != CardStateName.RightSplit) {
             String typeLine = CardDetailUtil.formatCardType(state, true).replace(" - ", " — ");
-            drawVerticallyCenteredString(g, typeLine, new Rectangle(x, y, w, h), TYPE_FONT, TYPE_SIZE);
+            drawVerticallyCenteredString(g, typeLine, new Rectangle(x, y+2, w, h), TYPE_FONT, TYPE_SIZE);
         }
     }
 
@@ -754,6 +754,7 @@ public class FCardImageRenderer {
     private static void drawTextBox(Graphics2D g, CardStateView state, String text, Color[] colors,
             int x, int y, int w, int h, int textBoxFlags) {
         int yAdjust = (textBoxFlags >> 16);
+        int textYAdjust = yAdjust + 12;
         if (state.isLand()) {
             DetailColors modColors = DetailColors.WHITE;
             if (state.isBasicLand()) {
@@ -810,12 +811,12 @@ public class FCardImageRenderer {
             if (StringUtils.isEmpty(text))
                 return;
 
-            int padding = TEXT_SIZE / 4;
+            int padding = TEXT_SIZE / 2 + 6;
             x += padding;
             w -= 2 * padding;
             if ((textBoxFlags & 2) == 2)
                 w -= PT_BOX_WIDTH;
-            drawTextBoxText(g, text, x, y + yAdjust, w, h - yAdjust, textBoxFlags);
+            drawTextBoxText(g, text, x, y + textYAdjust, w, h - textYAdjust, textBoxFlags);
         }
     }
 
@@ -876,7 +877,7 @@ public class FCardImageRenderer {
 
         x += (PT_BOX_WIDTH - totalPieceWidth) / 2;
         for (int i = 0; i < pieces.size(); i++) {
-            drawVerticallyCenteredString(g, pieces.get(i), new Rectangle(x, y - 2, w, h), PT_FONT, PT_SIZE);
+            drawVerticallyCenteredString(g, pieces.get(i), new Rectangle(x, y + 2, w, h), PT_FONT, PT_SIZE);
             x += pieceWidths[i];
         }
         TEXT_COLOR = Color.BLACK;
