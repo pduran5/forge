@@ -877,7 +877,7 @@ public class FCardImageRenderer {
 
         x += (PT_BOX_WIDTH - totalPieceWidth) / 2;
         for (int i = 0; i < pieces.size(); i++) {
-            drawVerticallyCenteredString(g, pieces.get(i), new Rectangle(x, y + 2, w, h), PT_FONT, PT_SIZE);
+            drawVerticallyCenteredString(g, pieces.get(i), new Rectangle(x, y + 4, w, h), PT_FONT, PT_SIZE);
             x += pieceWidths[i];
         }
         TEXT_COLOR = Color.BLACK;
