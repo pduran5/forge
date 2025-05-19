@@ -1,6 +1,7 @@
 Abandon Hope|Perder la esperanza|Conjuro|Como coste adicional para jugar Perder la esperanza, descártate X cartas de tu mano.\nMira la mano del oponente objetivo y elige X cartas. Ese jugador se descarta de esas cartas.
 Abbey Gargoyles|Gárgolas de la Abadía|Criatura - Gárgola|Vuela, protección contra rojo.
 Abbey Matron|Abadesa|Criatura - Clérigo Humano|{W}, {T}: La Abadesa obtiene +0/+3 hasta el final del turno.
+Abbot of Keral Keep|Abad de la Fortaleza Keral|Criatura — Monje humano|Destreza. (Siempre que lances un hechizo que no sea de criatura, esta criatura obtiene +1/+1 hasta el final del turno.)\nCuando el Abad de la Fortaleza Keral entre al campo de batalla, exilia la primera carta de tu biblioteca. Hasta el final del turno, puedes jugar esa carta.
 Abduction|Secuestro|Encantamiento - Aura|Encantar criatura\nCuando el Secuestro entra en juego, endereza la criatura objetivo.\nControlas la criatura encantada.\nCuando la criatura encantada vaya a su cementerio, devuelve esa criatura al juego bajo el control de su propietario.
 Abeyance|Supresión|Instantáneo|Hasta el final del turno, el jugador objetivo no puede lanzar hechizos instantáneos, conjuros ni habilidades activadas que no sean de maná.\nRoba una carta.
 Abjure|Abjurar|Instantáneo|Como coste adicional para jugar Abjurar, sacrifica un permanente azul.\nContrarresta el hechizo objetivo.
@@ -257,7 +258,7 @@ Awesome Presence|Presencia sobrecogedora|Encantamiento - Aura|La criatura encant
 Axebane Beast|Bestia de Rompehachas|Criatura - Bestia|
 Axebane Stag|Ciervo de Rompehachas|Criatura - Alce|
 Axegrinder Giant|Gigante tritura hachas|Criatura - Guerrero Gigante|
-Aysen Abbey|Abadía de Aysen|Tierra|{T}: añade 1 a tu reserva de maná.\n{1}, {T}: añade {B} a tu reserva de maná.\n{2}, {T}: añade {G} o {U} a tu reserva de maná.
+Aysen Abbey|Abadía de Aysen|Tierra|{T}: Añade 1 a tu reserva de maná.\n{1}, {T}: Añade {B} a tu reserva de maná.\n{2}, {T}: Añade {G} o {U} a tu reserva de maná.
 Aysen Bureaucrats|Burócratas de Aysen|Criatura - Consejero Humano|{T}: gira la criatura objetivo con fuerza 2 o menor.
 Aysen Crusader|Crusado de Aysen|Criatura - Caballero Humano|La fuerza y resistencia del Cruzado de Aysen son cada una igual a 2 más el número de héroes que controlas.
 Aysen Highway|Camino Real de Aysen|Encantamiento|Las criatura blancas ganan la habilidad de cruzar llanuras. (Esta criatura es imbloqueable mientras que el jugador defensor controle una llanura.)
@@ -609,7 +610,7 @@ Cave Tiger|Tigre de las cuevas|Criatura - Felino|Siempre que el Tigre de las cue
 Cave-In|Desplome|Conjuro|Puedes retirar una carta roja de tu mano en vez de jugar el coste de maná del Desplome.\nEl Desplome hace 2 puntos de daño a cada criatura y a cada jugador.
 Cavern Crawler|Reptante de cavernas|Criatura - Insecto|Cruza motañas (Esta criatura es imbloqueable mientras que el jugador defensor controle una motaña.)\n{R}: el Reptante de cavernas obtiene +1/-1 hasta el final del turno.
 Cavern Harpy|Arpía de la caverna|Criatura - Bestia Saga|Vuela.\nCuando la Arpía de la Caverna entra en juego, devuelve una criatura azul o negra de tu control a la mano de su propietario.
-Caves of Koilos|Cuevas de Koilos|Tierra|
+Caves of Koilos|Cuevas de Koilos|Tierra|{T}: Agrega {C}.\n{T}: Agrega {W} o {B}. Esta tierra te hace 1 punto de daño.
 Celestial Convergence|Convergencia Celestial|Encantamiento|La Convergencia Celestial entra en juego con siete contadores de presagio sobre él.\nAl comienzo de tu mantenimiento, quita un contador de presagio de la Convergencia Celestial. Si no hay contadores de presagio en la Convergencia Celestial, el jugador con el mayor total de vidas gana la partida. Si dos o más jugadores están empatados para el mayor total de vidas, el juego es un empate.
 Celestial Dawn|Aurora celestial|Encantamiento|Las tierras que controlas son llanuras.
 Celestial Kirin|Kirin celestial|Criatura Legendaria - Espíritu Kirin|Vuela.
