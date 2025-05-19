@@ -305,7 +305,7 @@ public class ImageCache {
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(StaticData.instance().getCardEdition(ipc.getEdition()).getDate());
                     int year = cal.get(Calendar.YEAR);
-                    legalString = "Illus. " + ipc.getArtist() + "   ©" + year + " WOTC";
+                    legalString = ipc.getArtist() + "   © " + year + " Wizards of the Coast";
                 }
                 FCardImageRenderer.drawCardImage(original.createGraphics(), card, altState, width, height, art, legalString);
                 // Skip store cache since the rendering speed seems to be fast enough
