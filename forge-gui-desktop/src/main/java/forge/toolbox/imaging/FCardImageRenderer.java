@@ -670,7 +670,11 @@ public class FCardImageRenderer {
         //draw name for card
         x += padding;
         w -= 2 * padding;
-        drawVerticallyCenteredString(g, CardTranslation.getTranslatedName(state.getName()),
+        String cardText = CardTranslation.getTranslatedName(state.getName());
+        if (cardText.startsWith("A-")) {
+            cardText = "¤ " + cardText.substring(2);
+        }
+        drawVerticallyCenteredString(g, cardText,
             new Rectangle(x, y+5, w, h), NAME_FONT, NAME_SIZE);
     }
 
