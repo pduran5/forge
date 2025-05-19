@@ -193,7 +193,7 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
         ptText.setFont(getFont().deriveFont(Font.BOLD, 13f));
         ptText.setForeground(Color.white);
         ptText.setGlow(Color.black);
-        add(ptText);
+        // add(ptText);
 
         // Damage
         damageText = new OutlinedLabel();
