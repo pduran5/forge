@@ -16,7 +16,6 @@ on:
 
 jobs:
   build:
-    if: github.repository_owner == 'Card-Forge'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -31,9 +30,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
-          server-id: cardforge-repo
-          server-username: ${{ secrets.FTP_USERNAME }}
-          server-password: ${{ secrets.FTP_PASSWORD }}
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Install old maven (3.8.1)
@@ -85,7 +81,7 @@ jobs:
       - name: Build/Install/Publish to GitHub Packages Apache Maven
         run: |
           export _JAVA_OPTIONS="-Xmx2g"
-          mvn -U -B -P android-release-build install -e -Dcardforge-repo.username=${{ secrets.FTP_USERNAME }} -Dcardforge-repo.password=${{ secrets.FTP_PASSWORD }} -Dandroid.sdk.path=/usr/local/lib/android/sdk -Dandroid.buildToolsVersion=35.0.0 -Dmaven.test.skip=true
+          mvn -U -B -P android-release-build install -e -Dandroid.sdk.path=/usr/local/lib/android/sdk -Dandroid.buildToolsVersion=35.0.0 -Dmaven.test.skip=true
           mkdir upload
           mv /home/runner/work/forge/forge/forge-gui-android/target/*-signed-aligned.apk upload/
           mv /home/runner/work/forge/forge/forge-gui-android/target/assets.zip upload/
@@ -95,16 +91,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: 📂 Sync files
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        #if: ${{ inputs.upload_package }}
+      - name: 📦 Upload upload folder as Artifact
+        uses: actions/upload-artifact@v3
         with:
-          server: ftp.cardforge.org
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: upload/
-          server-dir: downloads/dailysnapshots/
-          state-name: .ftp-deploy-android-sync-state.json
+          name: android-snapshot-${{ github.run_id }}
+          path: upload/
 
       - name: Send failure notification to Discord
         if: failure() # This step runs only if the job fails
