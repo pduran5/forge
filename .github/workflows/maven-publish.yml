@@ -1,9 +1,6 @@
 name: Publish Desktop Forge
 
 on:
-  push:
-    branches:
-      - spanish
   workflow_dispatch:
     inputs:
       debug_enabled:
