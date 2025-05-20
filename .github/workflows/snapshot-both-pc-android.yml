@@ -116,9 +116,9 @@ jobs:
           name: Daily Snapshot
           tag: daily-snapshots
           prerelease: true
-          artifacts: izpack/*
           allowUpdates: true
           removeArtifacts: true
+          artifacts: "izpack/*-*.jar, izpack/*-signed-aligned.apk, izpack/assets.zip"
 
       - name: Send failure notification to Discord
         if: failure() # This step runs only if the job fails

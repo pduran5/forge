@@ -85,17 +85,18 @@ jobs:
           mkdir upload
           mv /home/runner/work/forge/forge/forge-gui-android/target/*-signed-aligned.apk upload/
           mv /home/runner/work/forge/forge/forge-gui-android/target/assets.zip upload/
-          mv /home/runner/work/forge/forge/forge-gui-android/target/classes/assets/version.txt upload/
           cd upload
           ls
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: 📦 Upload upload folder as Artifact
+      - name: 📦 Upload APK and assets.zip as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-snapshot-${{ github.run_id }}
-          path: upload/
+          path: |
+            upload/*-signed-aligned.apk
+            upload/assets.zip
 
       - name: Send failure notification to Discord
         if: failure() # This step runs only if the job fails
