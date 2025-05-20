@@ -27,10 +27,10 @@ import java.util.Map;
 
 public final class ForgeConstants {
     private static final Localizer localizer = Localizer.getInstance();
-    public static final String GITHUB_FORGE_URL                 = "https://github.com/Card-Forge/forge/";
+    public static final String GITHUB_FORGE_URL                 = "https://github.com/pduran5/forge/";
     public static final String GITHUB_RELEASES_ATOM             = GITHUB_FORGE_URL + "releases.atom";
     public static final String GITHUB_COMMITS_ATOM              = GITHUB_FORGE_URL + "commits/master.atom";
-    public static final String GITHUB_SNAPSHOT_URL              = GITHUB_FORGE_URL + "releases/download/daily-snapshots/";
+    public static final String GITHUB_SNAPSHOT_URL              = GITHUB_FORGE_URL + "releases/tag/daily-snapshots/";
     public static final String RELEASE_URL                      = "https://releases.cardforge.org/";
     public static final String PATH_SEPARATOR                   = File.separator;
     public static final String ASSETS_DIR                       = GuiBase.getInterface().getAssetsDir();
