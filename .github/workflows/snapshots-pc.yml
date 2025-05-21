@@ -49,8 +49,11 @@ jobs:
       - name: Rename before upload
         run: |
           mkdir izpack
-          # move jar from work dir to izpack dir
-          mv /home/runner/work/forge/forge/forge-installer/*/*.jar izpack/
+
+          # move bz2 and jar from work dir to izpack dir
+          mv /home/runner/work/forge/forge/forge-installer/*/*.{bz2,jar} izpack/
+          # move desktop build.txt to izpack
+          mv /home/runner/work/forge/forge/forge-gui-desktop/target/classes/build.txt izpack/          
           
           cd izpack
           d=$(date +%m.%d)
@@ -60,12 +63,20 @@ jobs:
             echo "file renamed to ${bname}-${d}.jar"
             mv "${bname}.jar" "${bname}-${d}.jar"
           done
+          for file in *.bz2; do
+            # remove .bz2
+            fname="${file%.*}"
+            # remove .tar
+            bname="${fname%.*}"
+            echo "file renamed to ${bname}-${d}.tar.bz2"
+            mv "${fname}.bz2" "${bname}-${d}.tar.bz2"
+          done
 
-      - name: 📦 Upload .jar as Artifact
+      - name: 📦 Upload izpack folder as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: desktop-snapshot-${{ github.run_id }}
-          path: izpack/*.jar
+          path: izpack/
 
       - name: Send failure notification to Discord
         if: failure() # This step runs only if the job fails

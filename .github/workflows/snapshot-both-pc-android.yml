@@ -118,7 +118,7 @@ jobs:
           prerelease: true
           allowUpdates: true
           removeArtifacts: true
-          artifacts: "izpack/*-*.jar, izpack/*-signed-aligned.apk, izpack/assets.zip"
+          artifacts: "izpack/*-*.jar, izpack/*-signed-aligned.apk, izpack/assets.zip, izpack/*.bz2"
 
       - name: Send failure notification to Discord
         if: failure() # This step runs only if the job fails
