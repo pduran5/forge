@@ -40,14 +40,16 @@ public class AssetsDownloader {
             return;
         final String versionString = Forge.getDeviceAdapter().getVersionString();
         Forge.getSplashScreen().getProgressBar().setDescription("Checking for updates...");
+        /*
         if (versionString.contains("GIT")) {
             if (!GuiBase.isAndroid()) {
                 run(runnable);
                 return;
             }
         }
+        */
 
-        final String packageSize = GuiBase.isAndroid() ? "160MB" : "270MB";
+        final String packageSize = GuiBase.isAndroid() ? "239MB" : "354MB";
         final String apkSize = "12MB";
 
         final boolean isSnapshots = versionString.contains("SNAPSHOT");
@@ -97,7 +99,7 @@ public class AssetsDownloader {
                         if (buildTxtFileHandle.exists()) {
                             buildTimeStamp = format.parse(buildTxtFileHandle.readString());
                             buildDate = buildTimeStamp.toString();
-                            // if morethan 23 hours the difference, then allow to update..
+                            // if more than 23 hours the difference, then allow to update..
                             verifyUpdatable = DateUtil.getElapsedHours(buildTimeStamp, snapsTimestamp) > 23;
                         } else {
                             //fallback to old version comparison
@@ -161,7 +163,7 @@ public class AssetsDownloader {
                 return;
             }
         }
-        // non android don't have seperate package to check
+        // non android don't have separate package to check
         if (!GuiBase.isAndroid()) {
             run(runnable);
             return;
