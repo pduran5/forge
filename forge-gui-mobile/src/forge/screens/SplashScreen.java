@@ -40,7 +40,7 @@ public class SplashScreen extends FContainer {
     public FProgressBar getProgressBar() {
         if (progressBar == null) {
             progressBar = new FProgressBar();
-            progressBar.setDescription("Welcome to Forge");
+            progressBar.setDescription("Bienvenido a Forge");
         }
         return progressBar;
     }
@@ -365,8 +365,8 @@ public class SplashScreen extends FContainer {
             disclaimerFont = FSkinFont.get(9);
         }
         float disclaimerHeight = 30f / 450f * h;
-        String disclaimer = "Forge is not affiliated in any way with Wizards of the Coast.\n"
-                + "Forge is open source software, released under the GNU General Public License.";
+        String disclaimer = "Forge no está afiliado de ninguna manera con Wizards of the Coast.\n"
+                + "Forge es un software de código abierto, publicado bajo la GNU General Public License.";
         if (Forge.forcedEnglishonCJKMissing && !clear) {
             clear = true;
             FSkinFont.preloadAll("");

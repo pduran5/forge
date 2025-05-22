@@ -96,7 +96,7 @@ public class SplashFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setTitle("Loading Forge...");
+        this.setTitle("Cargando Forge...");
 
         // Insert JPanel to hold content above background
         final JPanel pnlContent = new JPanel();
@@ -105,9 +105,9 @@ public class SplashFrame extends JFrame {
 
         // Disclaimer
         final JLabel lblDisclaimer = new JLabel("<html><center>"
-                + "Forge is not affiliated in any way with Wizards of the Coast."
-                + "<br>Forge is open source software, released under "
-                + "the GNU General Public License.</center></html>");
+                + "Forge no está afiliado de ninguna manera con Wizards of the Coast."
+                + "<br>Forge es un software de código abierto, publicado bajo "
+                + "la GNU General Public License.</center></html>");
 
         lblDisclaimer.setBounds(0, 300, 450, 20);
         lblDisclaimer.setFont(new Font("Tahoma", Font.PLAIN, 9));
@@ -130,7 +130,7 @@ public class SplashFrame extends JFrame {
         pnlContent.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escAction");
         pnlContent.getActionMap().put("escAction", actClose);
 
-        barProgress.setString("Welcome to Forge.");
+        barProgress.setString("Bienvenido a Forge.");
         barProgress.setBounds(20, 373, 410, 57);
         pnlContent.add(barProgress);
 
