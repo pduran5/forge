@@ -189,7 +189,7 @@ public class VLobby implements ILobbyView {
                 }
             });
         }
-        gamesInMatchFrame.add(newLabel(localizer.getMessage("lblGamesInMatch")), "w 150px!, h 30px!");
+        gamesInMatchFrame.add(newLabel(localizer.getMessage("lblGamesInMatch")), "w 200px!, h 30px!");
         gamesInMatchFrame.add(gamesInMatch, "w 50px!, h 30px!");
         gamesInMatchFrame.setOpaque(false);
         gamesInMatch.setSelectedItem("3");

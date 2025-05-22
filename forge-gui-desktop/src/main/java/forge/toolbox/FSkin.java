@@ -1401,7 +1401,7 @@ public class FSkin {
         assembleSleeves();
 
         // Images loaded; can start UI init.
-        FView.SINGLETON_INSTANCE.setSplashProgessBarMessage("Creating display components.");
+        FView.SINGLETON_INSTANCE.setSplashProgessBarMessage("Creando componentes de visualización.");
         loaded = true;
 
         // Clear references to buffered images

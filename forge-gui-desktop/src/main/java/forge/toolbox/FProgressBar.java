@@ -62,7 +62,7 @@ public class FProgressBar extends JProgressBar implements IProgressBar {
 
         if (showETA) {
             calculateETA(progress);
-            sb.append(", ETA").append(String.format("%02d:%02d:%02d", etaSecs / 3600, (etaSecs % 3600) / 60, etaSecs % 60 + 1));
+            sb.append(", Tiempo estimado ").append(String.format("%02d:%02d:%02d", etaSecs / 3600, (etaSecs % 3600) / 60, etaSecs % 60 + 1));
         }
         setString(sb.toString());
     }
