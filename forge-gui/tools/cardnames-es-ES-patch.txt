@@ -3801,7 +3801,7 @@ Voracious Cobra|Cobra Voraz|Criatura - Vibora|Daña primero\nSiempre que la Cobr
 Vug Lizard|Lagarto de geoda|Criatura - Lagarto|Eco (Al comienzo de tu próximo mantenimiento después de que este permanente entra bajo tu control, sacrifícalo a menos que pagues su coste de maná.)\nCruza montañas (Esta criatura es imbloqueable mientras que el jugador defensor controle una montaña.)
 Waiting in the Weeds|Esperando en la maleza|Conjuro|Cada jugador pone una ficha de criatura gato verde 1/1 en juego por cada bosque enderezado que controle.
 Wake of Destruction|Secuela de la destrucción|Conjuro|Destruye la tierra objetivo y todas las tierras con el mismo nombre que esa tierra.
-Wake of Vultures|Buitres expectantes|Criatura - Ave|Vuela\n{1}{N}, sacrificar una criatura: regenera los Buitres expectantes.
+Wake of Vultures|Buitres expectantes|Criatura - Ave|Vuela\n{1}{B}, sacrificar una criatura: regenera los Buitres expectantes.
 Walking Dream|Sueño andante|Criatura - Ilusión|El Sueño andante es imbloqueable.\nEl Sueño andante no se endereza durante tu paso de enderezar si un oponente control dos o más criaturas.
 Walking Sponge|Esponja caminante|Criatura - Esponja|{T}: la criatura objetivo pierde la habilidad de volar, dañar primero, o arrollar hasta el final del turno.
 Walking Wall|Muro que camina|Criatura Artefacto - Muro|(Los muros no pueden atacar.)\n{3}: el Muro que camina obtiene +3/-1 hasta el final del turno y puede atacar este turno como si no fuera muro. Juega esta habilidad sólo una vez cada turno.
