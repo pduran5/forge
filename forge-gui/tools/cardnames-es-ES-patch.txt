@@ -320,7 +320,7 @@ Battle Cry|Grito de guerra|Instantáneo|Endereza todas la criaturas blancas de t
 Battle Frenzy|Furor guerrero|Instantáneo|Las criaturas verdes de tu control obtienen +1/+1 hasta el final del turno.\nLas criaturas que no son verdes de tu control obtienen +1/+0 hasta el final del turno.
 Battle Rampart|Bastión de batalla|Criatura - Muro|Defensor.
 Battle Squadron|Esuadrón de batalla|Criatura - Trasgo|Vuela\nLa fuerza y resistencia del Escuadrón de batalla son igual al número de criaturas de tu control.
-Battlefield Forge|Forja del campo de batalla|Tierra|
+Battlefield Forge|Forja del campo de batalla|Tierra|{T}: Agrega {C}.\n{T}: Agrega {R} o {W}. Esta tierra te hace 1 punto de daño.
 Battlefield Percher|Perca del campo de batalla|Criatura - Ave|Vuela.\nLa Perca del campo de batalla puede bloquear sólo criaturas con la habilidad de volar.\n{1}{B}: la Perca del campo de batalla obtiene +1/+1 hasta el final del turno.
 Bay Falcon|Halcón de la bahía|Criatura - Ave|Vuela\nEl Halcón de la bahía no se gira al atacar.
 Bayou Dragonfly|Libélula de las ciénagas|Criatura - Insecto|Vuela, cruza pantanos (Esta criatura es imbloqueable mientras que el jugador defensor controle un pantano.)
