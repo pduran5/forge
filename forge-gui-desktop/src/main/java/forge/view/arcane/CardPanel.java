@@ -180,9 +180,9 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
 
     private void createCardNameOverlay() {
         titleText = new OutlinedLabel();
-        titleText.setFont(getFont().deriveFont(Font.BOLD, 13f));
-        titleText.setForeground(Color.white);
-        titleText.setGlow(Color.black);
+        titleText.setFont(new Font("JaceBeleren", Font.BOLD, 14));
+        titleText.setForeground(Color.black);
+        titleText.setGlow(Color.white);
         titleText.setWrap(true);
         add(titleText);
     }
@@ -190,14 +190,14 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
     private void createPTOverlay() {
         // Power/Toughness
         ptText = new OutlinedLabel();
-        ptText.setFont(getFont().deriveFont(Font.BOLD, 14f));
-        ptText.setForeground(Color.white);
-        ptText.setGlow(Color.black);
+        ptText.setFont(new Font("JaceBeleren", Font.BOLD, 14));
+        ptText.setForeground(Color.black);
+        ptText.setGlow(Color.white);
         add(ptText);
 
         // Damage
         damageText = new OutlinedLabel();
-        damageText.setFont(getFont().deriveFont(Font.BOLD, 15f));
+        damageText.setFont(new Font("JaceBeleren", Font.BOLD, 16));
         damageText.setForeground(new Color(160,0,0));
         damageText.setGlow(Color.white);
         add(damageText);
@@ -205,9 +205,9 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
 
     private void createCardIdOverlay() {
         cardIdText = new OutlinedLabel();
-        cardIdText.setFont(getFont().deriveFont(Font.BOLD, 11f));
-        cardIdText.setForeground(Color.LIGHT_GRAY);
-        cardIdText.setGlow(Color.black);
+        cardIdText.setFont(new Font("JaceBeleren", Font.BOLD, 12));
+        cardIdText.setForeground(Color.black);
+        cardIdText.setGlow(Color.LIGHT_GRAY);
         add(cardIdText);
     }
 
@@ -459,8 +459,8 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
         if (isVisible) {
             final Dimension idSize = cardIdText.getPreferredSize();
             cardIdText.setSize(idSize.width, idSize.height);
-            final int idX = Math.round(imgSize.width * (24f / 480));
-            final int idY = Math.round(imgSize.height * (650f / 680)) - 8;
+            final int idX = Math.round(imgSize.width * (24f / 480)) - 4;
+            final int idY = Math.round(imgSize.height * (650f / 680)) - 4;
             cardIdText.setLocation(imgPos.x + idX, imgPos.y + idY);
         }
         cardIdText.setVisible(isVisible);
@@ -472,8 +472,8 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
             // Power
             final Dimension ptSize = ptText.getPreferredSize();
             ptText.setSize(ptSize.width, ptSize.height);
-            final int ptX = rightLine - ptSize.width/2 + 3;
-            final int ptY = Math.round(imgSize.height * (650f / 680)) - 9;
+            final int ptX = rightLine - ptSize.width/2 + 2;
+            final int ptY = Math.round(imgSize.height * (650f / 680)) - 4;
             ptText.setLocation(imgPos.x + ptX, imgPos.y + ptY);
             // Toughness
             final Dimension dmgSize = damageText.getPreferredSize();
