@@ -43,6 +43,7 @@ public class VCombat implements IVDoc<CCombat> {
     private final CCombat controller;
     public VCombat(final CCombat controller) {
         this.controller = controller;
+        tar.setFont(FSkin.getFont());
         tar.setOpaque(false);
         tar.setBorder(new FSkin.MatteSkinBorder(0, 0, 0, 0, FSkin.getColor(FSkin.Colors.CLR_BORDERS)));
         tar.setForeground(FSkin.getColor(FSkin.Colors.CLR_TEXT));
