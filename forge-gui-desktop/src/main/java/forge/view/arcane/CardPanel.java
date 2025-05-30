@@ -190,10 +190,10 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
     private void createPTOverlay() {
         // Power/Toughness
         ptText = new OutlinedLabel();
-        ptText.setFont(getFont().deriveFont(Font.BOLD, 13f));
+        ptText.setFont(getFont().deriveFont(Font.BOLD, 14f));
         ptText.setForeground(Color.white);
         ptText.setGlow(Color.black);
-        // add(ptText);
+        add(ptText);
 
         // Damage
         damageText = new OutlinedLabel();
@@ -303,16 +303,16 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
         if (isSelected) {
             g2d.setColor(Color.green);
             final int n = Math.max(1, Math.round(cardWidth * CardPanel.SELECTED_BORDER_SIZE));
-            g2d.fillRoundRect(cardXOffset - n, (cardYOffset - n) + offset, cardWidth + (n * 2), cardHeight + (n * 2), cornerSize + n , cornerSize + n);
+            g2d.fillRoundRect(cardXOffset - n, (cardYOffset - n) + offset, cardWidth + (n * 2), cardHeight + (n * 2), 0 , 0);
         } else if (hasFlash && (getCard() != null && matchUI.mayView(getCard()))) {
             g2d.setColor(Color.cyan);
             final int n = Math.max(1, Math.round(cardWidth * CardPanel.SELECTED_BORDER_SIZE));
-            g2d.fillRoundRect(cardXOffset - n, (cardYOffset - n) + offset, cardWidth + (n * 2), cardHeight + (n * 2), cornerSize + n , cornerSize + n);
+            g2d.fillRoundRect(cardXOffset - n, (cardYOffset - n) + offset, cardWidth + (n * 2), cardHeight + (n * 2), 0 , 0);
         }
 
         // Black fill - (will become an outline for white bordered cards)
         g2d.setColor(Color.black);
-        g2d.fillRoundRect(cardXOffset, cardYOffset  + offset, cardWidth, cardHeight, cornerSize, cornerSize);
+        g2d.fillRoundRect(cardXOffset, cardYOffset  + offset, cardWidth, cardHeight, 0, 0);
 
         // White border if card is known to have it.
         if (getCard() != null && matchUI.mayView(getCard())) {
