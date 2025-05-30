@@ -472,8 +472,8 @@ public class CardPanel extends SkinnedPanel implements CardContainer, IDisposabl
             // Power
             final Dimension ptSize = ptText.getPreferredSize();
             ptText.setSize(ptSize.width, ptSize.height);
-            final int ptX = rightLine - ptSize.width/2;
-            final int ptY = Math.round(imgSize.height * (650f / 680)) - 10;
+            final int ptX = rightLine - ptSize.width/2 + 3;
+            final int ptY = Math.round(imgSize.height * (650f / 680)) - 9;
             ptText.setLocation(imgPos.x + ptX, imgPos.y + ptY);
             // Toughness
             final Dimension dmgSize = damageText.getPreferredSize();
