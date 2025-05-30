@@ -1,6 +1,7 @@
 package forge.screens.match.controllers;
 
 import com.google.common.collect.Iterables;
+import forge.util.CardTranslation;
 import org.apache.commons.lang3.StringUtils;
 
 import forge.game.GameEntityView;
@@ -86,7 +87,7 @@ public class CCombat implements ICDoc {
                 display.append(Lang.getInstance().getPossesive(controller.getName())).append(" ");
             }
         }
-        display.append(defender).append(" is attacked by:\n`");
+        display.append(defender).append(" es atacado por:\n`");
 
         // Associate Bands, Attackers Blockers
         boolean previousBand = false;
@@ -153,7 +154,7 @@ public class CCombat implements ICDoc {
         final StringBuilder sb = new StringBuilder();
         final CardStateView state = c.getCurrentState();
 
-        final String name = state.getName();
+        final String name = CardTranslation.getTranslatedName(state.getName());
 
         sb.append("( ").append(state.getPower()).append(" / ").append(state.getToughness()).append(" ) ... ");
         if (c.isFaceDown()) {

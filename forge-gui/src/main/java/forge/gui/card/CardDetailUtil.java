@@ -638,7 +638,7 @@ public class CardDetailUtil {
         String curCardColors = formatCurrentCardColors(state);
         if (!curCardColors.isEmpty()) {
             area.append("\n\n");
-            area.append("Current Card Colors: ");
+            area.append("Colores de la carta: ");
             area.append(curCardColors);
         }
 
@@ -646,14 +646,14 @@ public class CardDetailUtil {
         if (state.hasStorm()) {
             if (gameView != null) {
                 area.append("\n\n");
-                area.append("Current Storm Count: ").append(gameView.getStormCount());
+                area.append("Contador de tormentas: ").append(gameView.getStormCount());
             }
         }
 
         //show owner if being controlled by a different player
         if (card.getOwner() != card.getController()) {
             area.append("\n\n");
-            area.append("Owner: ").append(card.getOwner().toString());
+            area.append("Propietario: ").append(card.getOwner().toString());
         }
         return area.toString().trim();
     }
