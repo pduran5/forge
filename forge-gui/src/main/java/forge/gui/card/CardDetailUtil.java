@@ -542,8 +542,8 @@ public class CardDetailUtil {
 
         // a card has something attached to it
         if (card.hasCardAttachments()) {
-            area.append("\n");
-            area.append("=Attached: ");
+            area.append("\n\n");
+            area.append("=Anexado: ");
             area.append(StringUtils.join(card.getAttachedCards(), ", "));
             area.append("=");
         }
@@ -551,7 +551,7 @@ public class CardDetailUtil {
         // a card is attached to something
         if (card.getAttachedTo() != null) {
             area.append("\n");
-            area.append("*Attached to ").append(card.getAttachedTo()).append("*");
+            area.append("*Anexado a ").append(card.getAttachedTo()).append("*");
         }
         if (card.getEnchantedPlayer() != null) {
             area.append("\n");
@@ -625,7 +625,7 @@ public class CardDetailUtil {
         if (card.getMustBlockCards() != null) {
             area.append("\n");
             final String mustBlockThese = Lang.joinHomogenous(card.getMustBlockCards());
-            area.append("Must block ").append(mustBlockThese);
+            area.append("Debe bloquear a ").append(mustBlockThese);
         }
 
         // exerted

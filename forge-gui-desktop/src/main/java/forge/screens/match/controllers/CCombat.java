@@ -108,7 +108,7 @@ public class CCombat implements ICDoc {
             if (isBand) {
                 // Only print Band data if it's actually a band
                 display.append(" > BAND");
-                display.append(blocked ? " (blocked)" : " >>>");
+                display.append(blocked ? " (bloqueado)" : " >>>");
                 display.append("\n");
             }
 
@@ -120,7 +120,7 @@ public class CCombat implements ICDoc {
             if (!isBand) {
                 if (blocked) {
                     // if single creature is blocked, but no longer has blockers, tell the user!
-                    display.append("     (blocked)\n");
+                    display.append("     (bloqueado)\n");
                 }
                 else {
                     display.append("     >>>\n");
