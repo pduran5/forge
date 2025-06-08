@@ -1,8 +1,17 @@
 # ⚔️ Forge: The Magic: The Gathering Rules Engine
 
+Fork en el que se han realizado las siguientes modificaciones:
+- Traducciones adicionales al español de cartas, menús, ...
+- Cambiados sonidos y músicas por temas de Arena
+- Cambios en el diseño de generación de carta en la versión de escritorio:
+  - Uso de fuentes oficiales en el título, tipo, oracle y P/T de las cartas
+  - Reajustados overlays de carta para que estén mejor alineados y sean más visibles
+
+---
+
 Join the **Forge community** on [Discord](https://discord.gg/HcPJNyD66a)!
 
-[![Test build](https://github.com/Card-Forge/forge/actions/workflows/test-build.yaml/badge.svg)](https://github.com/Card-Forge/forge/actions/workflows/test-build.yaml)
+[![Test build](https://github.com/pduran5/forge/actions/workflows/test-build.yaml/badge.svg)](https://github.com/pduran5/forge/actions/workflows/test-build.yaml)
 
 ---
 
