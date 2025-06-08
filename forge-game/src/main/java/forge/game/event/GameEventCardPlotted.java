@@ -24,6 +24,6 @@ public class GameEventCardPlotted extends GameEvent {
      */
     @Override
     public String toString() {
-        return activatingPlayer.getName() + " has plotted " + (card != null ? card.toString() : "(unknown)");
+        return activatingPlayer.getName() + " ha tramado " + (card != null ? card.toString() : "(desconocido)");
     }
 }
