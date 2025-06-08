@@ -2,7 +2,7 @@
 
 Fork en el que se han realizado las siguientes modificaciones:
 - Traducciones adicionales al español de cartas, menús, ...
-- Cambiados sonidos y músicas por temas de Arena
+- Cambiados sonidos, músicas y tema por temática de Arena
 - Cambios en el diseño de generación de carta en la versión de escritorio:
   - Uso de fuentes oficiales en el título, tipo, oracle y P/T de las cartas
   - Reajustados overlays de carta para que estén mejor alineados y sean más visibles
