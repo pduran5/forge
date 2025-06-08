@@ -60,7 +60,7 @@ public class GuiDownloadZipService extends GuiDownloadService {
         if (!cancel) {
             FThreads.invokeInEdtNowOrLater(() -> {
                 if (progressBar != null)
-                    progressBar.setDescription(filesExtracted + " " + desc + " extracted");
+                    progressBar.setDescription(filesExtracted + " " + desc + " extraídos");
                 finish();
             });
         }
@@ -182,7 +182,7 @@ public class GuiDownloadZipService extends GuiDownloadService {
             if (progressBar != null) {
                 progressBar.reset();
                 progressBar.setPercentMode(true);
-                progressBar.setDescription("Extracting " + desc);
+                progressBar.setDescription("Extrayendo " + desc);
                 progressBar.setMaximum(zipFile.size());
             }
             FileUtil.ensureDirectoryExists(destFolder);
