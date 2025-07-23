@@ -25,6 +25,8 @@ jobs:
 
       - name: Fetch upstream changes from original repo
         run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
           git remote add upstream https://github.com/Card-Forge/forge.git
           git fetch upstream
           git merge upstream/master --allow-unrelated-histories || true
