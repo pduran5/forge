@@ -12,6 +12,7 @@ Lair
 Locus
 Mine
 Omenpath
+Planet:Planets
 Power-Plant
 Sphere:Spheres
 Tower
@@ -92,6 +93,7 @@ Dog:Dogs
 Dragon:Dragons
 Drake:Drakes
 Dreadnought:Dreadnoughts
+Drix:Drixes
 Drone:Drones
 Druid:Druids
 Dryad:Dryads
@@ -221,6 +223,7 @@ Pangolin:Pangolins
 Peasant:Peasants
 Pegasus:Pegasi
 Pentavite:Pentavites
+Performer:Performers
 Pest:Pests
 Phelddagrif:Phelddagrifs
 Phoenix:Phoenixes
@@ -365,9 +368,10 @@ Gold
 Incubator:Incubators
 Junk
 Key:Keys
+Lander:Landers
 Map
 Powerstone:Powerstones
-Spacecraft:Spacecrafts
+Spacecraft:Spacecraft
 Treasure:Treasures
 Vehicle:Vehicles
 [WalkerTypes]

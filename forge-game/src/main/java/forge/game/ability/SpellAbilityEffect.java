@@ -441,6 +441,7 @@ public abstract class SpellAbilityEffect {
         newSa.setIntrinsic(intrinsic);
         trig.setOverridingAbility(newSa);
         trig.setSpawningAbility(sa.copy(sa.getHostCard(), true));
+        trig.setKeyword(trig.getSpawningAbility().getKeyword());
         sa.getActivatingPlayer().getGame().getTriggerHandler().registerDelayedTrigger(trig);
     }
 
@@ -1066,11 +1067,14 @@ public abstract class SpellAbilityEffect {
         // if ability was granted use that source so they can be kept apart later
         if (cause.isCopiedTrait()) {
             exilingSource = cause.getOriginalHost();
+        } else if (cause.getKeyword() != null && cause.getKeyword().getStatic() != null) {
+            exilingSource = cause.getKeyword().getStatic().getOriginalHost();
         }
         movedCard.setExiledWith(exilingSource);
         Player exiler = cause.hasParam("DefinedExiler") ?
                 getDefinedPlayersOrTargeted(cause, "DefinedExiler").get(0) : cause.getActivatingPlayer();
         movedCard.setExiledBy(exiler);
+        movedCard.setExiledSA(cause);
     }
 
     public static GameCommand exileEffectCommand(final Game game, final Card effect) {
