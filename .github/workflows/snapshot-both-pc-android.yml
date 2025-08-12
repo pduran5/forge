@@ -27,10 +27,50 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          git remote add upstream https://github.com/Card-Forge/forge.git
+          git remote add upstream https://github.com/Card-Forge/forge.git 2>/dev/null || true
           git fetch upstream
           git checkout master
-          git merge upstream/master --allow-unrelated-histories --no-edit
+
+          # Backup de nuestros workflows específicos
+          mkdir -p /tmp/backup_workflows
+          # Lista de workflows que queremos mantener (nuestra versión)
+          cp .github/workflows/snapshot-both-pc-android.yml \
+             .github/workflows/snapshots-android.yml \
+             .github/workflows/snapshots-pc.yml \
+             .github/workflows/publish-android.yml \
+             .github/workflows/maven-publish.yml \
+             .github/workflows/remove-stale-branches.yml \
+             .github/workflows/test-maven-settings.yml \
+             .github/workflows/snapshot.yml \
+             /tmp/backup_workflows/ 2>/dev/null || true          
+
+          # Intentamos hacer merge, preferimos nuestros cambios en texto. Continuamos a pesar de conflictos binarios.
+          git merge -X ours upstream/master --no-commit || true
+
+          # Restaura los workflows del backup (si los copiamos)
+          cp /tmp/backup_workflows/*.yml .github/workflows/ 2>/dev/null || true
+          git add .github/workflows/
+
+          # Resolver conflictos binarios: usar nuestra versión
+          # Para cada archivo con conflicto que sea binario (extensión .mp3, ...) o en la carpeta de sonidos, usamos el nuestro.
+          # Buscamos los no resueltos: --diff-filter=U
+          for file in $(git diff --name-only --diff-filter=U); do
+              # Solo consideramos ciertos tipos de binarios, o todos? Podría ser todos.
+              # Pero para evitar problemas con archivos de texto que no se resolvieron (aunque no debería haber) podemos filtrar por extensión.
+              # Como tenemos muchos .mp3, mejor por extensión y por directorio? 
+              # Vamos a filtrar por:
+              #   - si es un binario? no tenemos el comando 'file' entonces por extensión
+              if [[ "$file" =~ \.(mp3|img|bin|png|jpg|jpeg|gif)$ ]]; then
+                  git checkout --ours -- "$file"
+                  git add "$file"
+              # Si no, pero es un archivo de texto que no se resolvió, nos saltamos (fue manejado por -X ours o no hay que hacer nada)
+              fi
+          done
+
+          # Si hubo conflictos restantes, intentar resolverlos con el editor true (vacío) o forzar commit 
+          # (porque ya deberían estar resueltos por nuestras manipulaciones)
+          git -c core.editor=true merge --continue || git commit -m "Merge: Resolved conflicts"
+          
           git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
