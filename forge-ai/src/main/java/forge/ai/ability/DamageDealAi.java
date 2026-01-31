@@ -33,12 +33,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import forge.util.IterableUtil;
+
 public class DamageDealAi extends DamageAiBase {
     @Override
-    public AiAbilityDecision chkDrawback(SpellAbility sa, Player ai) {
+    public AiAbilityDecision chkDrawback(Player ai, SpellAbility sa) {
         final SpellAbility root = sa.getRootAbility();
         final String damage = sa.getParam("NumDmg");
         Card source = sa.getHostCard();
@@ -108,16 +111,13 @@ public class DamageDealAi extends DamageAiBase {
                 dmg = ComputerUtilCost.getMaxXValue(sa, ai, sa.isTrigger());
 
                 // Try not to waste spells like Blaze or Fireball on early targets, try to do more damage with them if possible
-                if (ai.getController().isAI()) {
-                    AiController aic = ((PlayerControllerAi)ai.getController()).getAi();
-                    int holdChance = aic.getIntProperty(AiProps.HOLD_X_DAMAGE_SPELLS_FOR_MORE_DAMAGE_CHANCE);
-                    if (MyRandom.percentTrue(holdChance)) {
-                        int threshold = aic.getIntProperty(AiProps.HOLD_X_DAMAGE_SPELLS_THRESHOLD);
-                        boolean inDanger = ComputerUtil.aiLifeInDanger(ai, false, 0);
-                        boolean isLethal = sa.usesTargeting() && sa.getTargetRestrictions().canTgtPlayer() && dmg >= ai.getWeakestOpponent().getLife() && !ai.getWeakestOpponent().cantLoseForZeroOrLessLife();
-                        if (dmg < threshold && ai.getGame().getPhaseHandler().getTurn() / 2 < threshold && !inDanger && !isLethal) {
-                            return new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
-                        }
+                int holdChance = AiProfileUtil.getIntProperty(ai, AiProps.HOLD_X_DAMAGE_SPELLS_FOR_MORE_DAMAGE_CHANCE);
+                if (MyRandom.percentTrue(holdChance)) {
+                    int threshold = AiProfileUtil.getIntProperty(ai, AiProps.HOLD_X_DAMAGE_SPELLS_THRESHOLD);
+                    boolean inDanger = ComputerUtil.aiLifeInDanger(ai, false, 0);
+                    boolean isLethal = sa.usesTargeting() && sa.getTargetRestrictions().canTgtPlayer() && dmg >= ai.getWeakestOpponent().getLife() && !ai.getWeakestOpponent().cantLoseForZeroOrLessLife();
+                    if (dmg < threshold && ai.getGame().getPhaseHandler().getTurn() / 2 < threshold && !inDanger && !isLethal) {
+                        return new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
                     }
                 }
 
@@ -1086,7 +1086,7 @@ public class DamageDealAi extends DamageAiBase {
         }
 
         Game game = ai.getGame();
-        int chance = ((PlayerControllerAi)ai.getController()).getAi().getIntProperty(AiProps.CHANCE_TO_CHAIN_TWO_DAMAGE_SPELLS);
+        int chance = AiProfileUtil.getIntProperty(ai, AiProps.CHANCE_TO_CHAIN_TWO_DAMAGE_SPELLS);
 
         if (chance > 0 && (ComputerUtilCombat.lifeInDanger(ai, game.getCombat()) || ComputerUtil.aiLifeInDanger(ai, true, 0))) {
             chance = 100; // in danger, do it even if normally the chance is low (unless chaining is completely disabled)
@@ -1168,8 +1168,8 @@ public class DamageDealAi extends DamageAiBase {
     }
 
     @Override
-    public boolean willPayUnlessCost(SpellAbility sa, Player payer, Cost cost, boolean alreadyPaid,
-            FCollectionView<Player> payers) {
+    public boolean willPayUnlessCost(Player payer, SpellAbility sa, Cost cost, boolean alreadyPaid,
+                                     FCollectionView<Player> payers) {
         if (!payer.canLoseLife() || payer.cantLoseForZeroOrLessLife()) {
             return false;
         }
@@ -1188,6 +1188,72 @@ public class DamageDealAi extends DamageAiBase {
             }
         }
 
-        return super.willPayUnlessCost(sa, payer, cost, alreadyPaid, payers);
+        return super.willPayUnlessCost(payer, sa, cost, alreadyPaid, payers);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends GameEntity> T chooseSingleEntity(Player ai, SpellAbility sa, Collection<T> options,
+            boolean isOptional, Player targetedPlayer, Map<String, Object> params) {
+        final Card source = sa.getHostCard();
+        final boolean noPrevention = sa.hasParam("NoPrevention");
+        int dmg = calculateDamageAmount(sa, source, sa.getParam("NumDmg"));
+
+        // Separate options into creatures and players
+        List<Card> oppCreatures = CardLists.filterControlledBy(
+                IterableUtil.filter(options, Card.class), ai.getOpponents());
+        Iterable<Player> optionPlayers = IterableUtil.filter(options, Player.class);
+        List<Player> oppPlayers = ai.getOpponents().filter(p -> IterableUtil.any(optionPlayers, p::equals));
+
+        // First priority: kill opponent creatures
+        if (!oppCreatures.isEmpty()) {
+            CardCollection killables = CardLists.filter(oppCreatures, c ->
+                    (ComputerUtilCombat.getEnoughDamageToKill(c, dmg, source, false, noPrevention) <= dmg)
+                            && !ComputerUtil.canRegenerate(ai, c)
+                            && !c.hasSVar("SacMe"));
+            if (!killables.isEmpty()) {
+                return (T) ComputerUtilCard.getBestCreatureAI(killables);
+            }
+        }
+
+        // Second priority: target opponent player if beneficial
+        if (!oppPlayers.isEmpty() && shouldTgtP(ai, sa, dmg, noPrevention)) {
+            return (T) oppPlayers.get(0);
+        }
+
+        // Third priority: target any opponent creature (even if we can't kill it)
+        if (!oppCreatures.isEmpty()) {
+            return (T) ComputerUtilCard.getBestCreatureAI(oppCreatures);
+        }
+
+        // Fourth priority: target opponent player
+        if (!oppPlayers.isEmpty()) {
+            return (T) oppPlayers.get(0);
+        }
+
+        // If optional and only own stuff remains, don't choose
+        if (isOptional) {
+            return null;
+        }
+
+        // Mandatory: target teammate's worst creature before own
+        List<Card> alliedCreatures = CardLists.filterControlledBy(
+                IterableUtil.filter(options, Card.class), ai.getAllies());
+        if (!alliedCreatures.isEmpty()) {
+            return (T) ComputerUtilCard.getWorstCreatureAI(alliedCreatures);
+        }
+
+        // Mandatory: target own worst creature
+        List<Card> ownCreatures = CardLists.filterControlledBy(
+                IterableUtil.filter(options, Card.class), ai);
+        if (!ownCreatures.isEmpty()) {
+            return (T) ComputerUtilCard.getWorstCreatureAI(ownCreatures);
+        }
+
+        if (IterableUtil.any(optionPlayers, ai::equals)) {
+            return (T) ai;
+        }
+
+        return null;
     }
 }

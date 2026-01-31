@@ -25,7 +25,6 @@ import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -125,6 +124,7 @@ import forge.toolbox.imaging.FImageUtil;
 import forge.toolbox.special.PhaseIndicator;
 import forge.toolbox.special.PhaseLabel;
 import forge.trackable.TrackableCollection;
+import forge.util.FSerializableFunction;
 import forge.util.ITriggerEvent;
 import forge.util.Localizer;
 import forge.util.collect.FCollection;
@@ -1071,7 +1071,7 @@ public final class CMatchUI
     }
 
     @Override
-    public <T> List<T> getChoices(final String message, final int min, final int max, final List<T> choices, final List<T> selected, final Function<T, String> display) {
+    public <T> List<T> getChoices(final String message, final int min, final int max, final List<T> choices, final List<T> selected, final FSerializableFunction<T, String> display) {
         /*if ((choices != null && !choices.isEmpty() && choices.iterator().next() instanceof GameObject) || selected instanceof GameObject) {
             System.err.println("Warning: GameObject passed to GUI! Printing stack trace.");
             Thread.dumpStack();
@@ -1116,7 +1116,7 @@ public final class CMatchUI
 
     @Override
     public List<CardView> manipulateCardList(final String title, final Iterable<CardView> cards, final Iterable<CardView> manipulable, final boolean toTop, final boolean toBottom, final boolean toAnywhere) {
-	return GuiChoose.manipulateCardList(this, title, cards, manipulable, toTop, toBottom, toAnywhere);
+        return GuiChoose.manipulateCardList(this, title, cards, manipulable, toTop, toBottom, toAnywhere);
     }
 
     @Override
@@ -1269,15 +1269,15 @@ public final class CMatchUI
 
     @Override
     public void notifyStackAddition(GameEventSpellAbilityCast event) {
-        SpellAbility sa = event.sa;
+        SpellAbility sa = event.sa();
         String stackNotificationPolicy = FModel.getPreferences().getPref(FPref.UI_STACK_EFFECT_NOTIFICATION_POLICY);
         boolean isAi = sa.getActivatingPlayer().isAI();
         boolean isTrigger = sa.isTrigger();
-        int stackIndex = event.stackIndex;
+        int stackIndex = event.stackIndex();
         if (stackIndex == nextNotifiableStackIndex) {
             if (ForgeConstants.STACK_EFFECT_NOTIFICATION_ALWAYS.equals(stackNotificationPolicy) || (ForgeConstants.STACK_EFFECT_NOTIFICATION_AI_AND_TRIGGERED.equals(stackNotificationPolicy) && (isAi || isTrigger))) {
                 // We can go and show the modal
-                SpellAbilityStackInstance si = event.si;
+                SpellAbilityStackInstance si = event.si();
 
                 MigLayout migLayout = new MigLayout("insets 15, left, gap 30, fill");
                 JPanel mainPanel = new JPanel(migLayout);
@@ -1438,8 +1438,8 @@ public final class CMatchUI
     private int getRotation(CardView cardView) {
         final int rotation;
         if (cardView.isSplitCard()) {
-            String cardName = cardView.getName();
-            if (cardName.isEmpty()) { cardName = cardView.getAlternateState().getName(); }
+            String cardName = cardView.getOracleName();
+            if (cardName.isEmpty()) { cardName = cardView.getAlternateState().getOracleName(); }
 
             PaperCard pc = StaticData.instance().getCommonCards().getCard(cardName);
             boolean hasKeywordAftermath = pc != null && Card.getCardForUi(pc).hasKeyword(Keyword.AFTERMATH);
@@ -1514,9 +1514,9 @@ public final class CMatchUI
         Set<FullControlFlag> controlFlags = getGameView().getGame().getPlayer(pv).getController().getFullControl();
         final String lblFullControl = Localizer.getInstance().getMessage("lblFullControl");
         final JPopupMenu menu = new JPopupMenu(lblFullControl);
-        GuiUtils.addMenuItem(menu, lblFullControl, null, () -> {
-            FOptionPane.showMessageDialog(Localizer.getInstance().getMessage("lblFullControlDetails"), lblFullControl);
-        });
+        menu.add(
+                GuiUtils.createMenuItem("- " + lblFullControl + " -", null, null, false, true)
+        );
 
         addFullControlEntry(menu, "lblChooseCostOrder", FullControlFlag.ChooseCostOrder, controlFlags);
         addFullControlEntry(menu, "lblChooseCostReductionOrder", FullControlFlag.ChooseCostReductionOrderAndVariableAmount, controlFlags);

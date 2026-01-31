@@ -1,6 +1,5 @@
 package forge.game.player;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -12,7 +11,6 @@ import forge.card.mana.ManaAtom;
 import forge.game.GameEntityView;
 import forge.game.card.Card;
 import forge.game.card.CardView;
-import forge.game.card.CounterEnumType;
 import forge.game.card.CounterType;
 import forge.game.zone.PlayerZone;
 import forge.game.zone.ZoneType;
@@ -97,7 +95,7 @@ public class PlayerView extends GameEntityView {
     }
 
     public FCollectionView<PlayerView> getOpponents() {
-        return MoreObjects.firstNonNull(this.<FCollectionView<PlayerView>>get(TrackableProperty.Opponents), new FCollection<>());
+        return Objects.requireNonNullElse(this.<FCollectionView<PlayerView>>get(TrackableProperty.Opponents), new FCollection<>());
     }
     void updateOpponents(Player p) {
         set(TrackableProperty.Opponents, PlayerView.getCollection(p.getOpponents()));
@@ -191,9 +189,6 @@ public class PlayerView extends GameEntityView {
             }
         }
         return 0;
-    }
-    public int getCounters(CounterEnumType counterType) {
-        return getCounters(CounterType.get(counterType));
     }
     void updateCounters(Player p) {
         set(TrackableProperty.Counters, p.getCounters());

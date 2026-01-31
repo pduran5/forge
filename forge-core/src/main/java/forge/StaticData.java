@@ -18,8 +18,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 
 /**
  * The class holding game invariants, such as cards, editions, game formats. All that data, which is not supposed to be changed by player
@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
 public class StaticData {
     private final CardStorageReader cardReader;
     private final CardStorageReader tokenReader;
-    private final CardStorageReader customCardReader;
-
     private final String blockDataFolder;
     private final CardDb commonCards;
     private final CardDb variantCards;
@@ -70,22 +68,18 @@ public class StaticData {
         this(cardReader, null, customCardReader, null, editionFolder, customEditionsFolder, blockDataFolder, "", cardArtPreference, enableUnknownCards, loadNonLegalCards, false, false);
     }
 
-    public StaticData(CardStorageReader cardReader, CardStorageReader tokenReader, CardStorageReader customCardReader, CardStorageReader customTokenReader, String editionFolder, String customEditionsFolder, String blockDataFolder, String setLookupFolder, String cardArtPreference, boolean enableUnknownCards, boolean loadNonLegalCards, boolean allowCustomCardsInDecksConformance){
-        this(cardReader, tokenReader, customCardReader, customTokenReader, editionFolder, customEditionsFolder, blockDataFolder, setLookupFolder, cardArtPreference, enableUnknownCards, loadNonLegalCards, allowCustomCardsInDecksConformance, false);
-    }
-
     public StaticData(CardStorageReader cardReader, CardStorageReader tokenReader, CardStorageReader customCardReader, CardStorageReader customTokenReader, String editionFolder, String customEditionsFolder, String blockDataFolder, String setLookupFolder, String cardArtPreference, boolean enableUnknownCards, boolean loadNonLegalCards, boolean allowCustomCardsInDecksConformance, boolean enableSmartCardArtSelection) {
         this.cardReader = cardReader;
         this.tokenReader = tokenReader;
         this.editions = new CardEdition.Collection(new CardEdition.Reader(new File(editionFolder)));
         this.blockDataFolder = blockDataFolder;
-        this.customCardReader = customCardReader;
         this.allowCustomCardsInDecksConformance = allowCustomCardsInDecksConformance;
         this.enableSmartCardArtSelection = enableSmartCardArtSelection;
         this.loadNonLegalCards = loadNonLegalCards;
         lastInstance = this;
-        List<String> funnyCards = new ArrayList<>();
-        List<String> filtered = new ArrayList<>();
+        Set<String> funnyCards = new HashSet<>();
+        Set<String> filtered = new HashSet<>();
+
         editions.append(new CardEdition.Collection(new CardEdition.Reader(new File(customEditionsFolder), true)));
 
         {
@@ -111,7 +105,7 @@ public class StaticData {
 
                 final String cardName = card.getName();
 
-                if (!loadNonLegalCards && !card.getType().isLand() && funnyCards.contains(cardName))
+                if (!loadNonLegalCards && funnyCards.contains(cardName) && !card.getType().isBasicLand())
                     filtered.add(cardName);
 
                 if (card.isVariant()) {
@@ -134,12 +128,11 @@ public class StaticData {
                 }
             }
 
-            if (!filtered.isEmpty()) {
-                Collections.sort(filtered);
-            }
+            commonCards = new CardDb(regularCards, editions, filtered);
+            variantCards = new CardDb(variantsCards, editions, filtered);
 
-            commonCards = new CardDb(regularCards, editions, filtered, cardArtPreference);
-            variantCards = new CardDb(variantsCards, editions, filtered, cardArtPreference);
+            commonCards.setCardArtPreference(cardArtPreference);
+            variantCards.setCardArtPreference(cardArtPreference);
 
             //must initialize after establish field values for the sake of card image logic
             commonCards.initialize(false, false, enableUnknownCards);
@@ -564,7 +557,6 @@ public class StaticData {
      * @param allowedSetCodes The list of the allowed set codes to consider when looking for alternative card art
      *                        candidates. If the list is not null and not empty, will be used in combination with the
      *                        <code>isLegal</code> predicate.
-     * @see CardDb#isLegal(List<String>)
      * @return an instance of <code>PaperCard</code> that is the selected alternative candidate, or <code>null</code>
      *          if None could be found.
      */
@@ -784,6 +776,7 @@ public class StaticData {
         Queue<String> TOKEN_Q = new ConcurrentLinkedQueue<>();
         boolean nifHeader = false;
         boolean cniHeader = false;
+        final Pattern funnyCardCollectorNumberPattern = Pattern.compile("^F★?\\d+★?");
         for (CardEdition e : editions) {
             if (CardEdition.Type.FUNNY.equals(e.getType()))
                 continue;
@@ -791,11 +784,13 @@ public class StaticData {
             Map<String, Pair<Boolean, Integer>> cardCount = new HashMap<>();
             List<CompletableFuture<?>> futures = new ArrayList<>();
             for (CardEdition.EditionEntry c : e.getObtainableCards()) {
+                int amount = 1;
+
                 if (cardCount.containsKey(c.name())) {
-                    cardCount.put(c.name(), Pair.of(c.collectorNumber() != null && c.collectorNumber().startsWith("F"), cardCount.get(c.name()).getRight() + 1));
-                } else {
-                    cardCount.put(c.name(), Pair.of(c.collectorNumber() != null && c.collectorNumber().startsWith("F"), 1));
+                    amount = cardCount.get(c.name()).getRight() + 1;
                 }
+
+                cardCount.put(c.name(), Pair.of(c.collectorNumber() != null && funnyCardCollectorNumberPattern.matcher(c.collectorNumber()).matches(), amount));
             }
 
             // loop through the cards in this edition, considering art variations...
@@ -878,7 +873,7 @@ public class StaticData {
                 }
             }
         }
-        // stream().toList() causes crash on Android, use Collectors.toList()
+        // stream().toList() causes crash on Android 8-13, use Collectors.toList()
         List<String> NIF = new ArrayList<>(NIF_Q).stream().sorted().collect(Collectors.toList());
         List<String> CNI = new ArrayList<>(CNI_Q).stream().sorted().collect(Collectors.toList());
         List<String> TOK = new ArrayList<>(TOKEN_Q).stream().sorted().collect(Collectors.toList());

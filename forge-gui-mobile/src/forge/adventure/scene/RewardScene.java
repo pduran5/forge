@@ -293,7 +293,7 @@ public class RewardScene extends UIScene {
 
     public void loadRewards(Deck deck, Type type, ShopActor shopActor, boolean noSell) {
         Array<Reward> rewards = new Array<>();
-        for (PaperCard card : deck.getAllCardsInASinglePool().toFlatList()) {
+        for (PaperCard card : deck.getAllCardsInASinglePool(true, true).toFlatList()) {
             rewards.add(new Reward(card, noSell));
         }
         loadRewards(rewards, type, shopActor);
@@ -353,7 +353,7 @@ public class RewardScene extends UIScene {
         headerLabel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (type == Type.Loot) {
+                if (type == Type.Loot || type == Type.QuestReward) {
                     autoSell = !autoSell;
                     String cb = autoSell ? "\u2611 " : "\u2610 ";
                     headerLabel.setText("[%?SHINY][;]" + cb + Forge.getLocalizer().getMessage("lblAll"));
@@ -416,10 +416,6 @@ public class RewardScene extends UIScene {
                 }
                 break;
             case QuestReward:
-                headerLabel.setVisible(false);
-                headerLabel.setText("");
-                restockButton.setVisible(false);
-                break;
             case Loot:
                 headerLabel.setPosition(restockButton.getX(), restockButton.getY());
                 headerLabel.setVisible(true);

@@ -27,6 +27,7 @@ import forge.util.TextUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static forge.card.MagicColor.Constant.BASIC_LANDS;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -43,16 +44,19 @@ public final class CardRules implements ICardCharacteristics {
     private CardSplitType splitType;
     private ICardFace mainPart;
     private ICardFace otherPart;
-
     private Map<CardStateName, ICardFace> specializedParts = Maps.newHashMap();
+    private List<ICardFace> allFaces;
+
     private CardAiHints aiHints;
     private ColorSet colorIdentity;
     private ColorSet deckbuildingColors;
     private String meldWith;
     private String partnerWith;
+    private String partnerType;
     private boolean addsWildCardColor;
     private int setColorID;
     private boolean custom;
+    private boolean unsupported;
     private String path;
 
     public CardRules(ICardFace[] faces, CardSplitType altMode, CardAiHints cah) {
@@ -68,9 +72,13 @@ public final class CardRules implements ICardCharacteristics {
             specializedParts.put(CardStateName.SpecializeG, faces[6]);
         }
 
+        // Android doesn't support toUnmodifiableList
+        allFaces = Arrays.stream(faces).filter(Objects::nonNull).collect(Collectors.toList());
+
         aiHints = cah;
         meldWith = "";
         partnerWith = "";
+        partnerType = "";
         addsWildCardColor = false;
         setColorID = 0;
 
@@ -92,6 +100,7 @@ public final class CardRules implements ICardCharacteristics {
         mainPart = newRules.mainPart;
         otherPart = newRules.otherPart;
         specializedParts = Maps.newHashMap(newRules.specializedParts);
+        allFaces = newRules.allFaces;
         aiHints = newRules.aiHints;
         colorIdentity = newRules.colorIdentity;
         meldWith = newRules.meldWith;
@@ -162,26 +171,12 @@ public final class CardRules implements ICardCharacteristics {
         return specializedParts;
     }
 
-    public Iterable<ICardFace> getAllFaces() {
-        return Iterables.concat(Arrays.asList(mainPart, otherPart), specializedParts.values());
+    public List<ICardFace> getAllFaces() {
+        return allFaces;
     }
 
     public boolean isTransformable() {
-        if (CardSplitType.Transform == getSplitType()) {
-            return true;
-        }
-        if (CardSplitType.Modal != getSplitType()) {
-            return false;
-        }
-        for (ICardFace face : getAllFaces()) {
-            for (String spell : face.getAbilities()) {
-                if (spell.contains("AB$ SetState") && spell.contains("Mode$ Transform")) {
-                    return true;
-                }
-            }
-            // TODO check keywords if needed
-        }
-        return false;
+        return CardSplitType.Transform == getSplitType() || CardSplitType.Modal == getSplitType();
     }
 
     public ICardFace getWSpecialize() {
@@ -220,7 +215,9 @@ public final class CardRules implements ICardCharacteristics {
     }
 
     public boolean isCustom() { return custom; }
-    public void setCustom() { custom = true;   }
+    public void setCustom() { custom = true; }
+
+    public boolean isUnsupported() { return unsupported; }
 
     @Override
     public CardType getType() {
@@ -246,7 +243,7 @@ public final class CardRules implements ICardCharacteristics {
     public ColorSet getColor() {
         switch (splitType.getAggregationMethod()) {
             case COMBINE:
-                return ColorSet.fromMask(mainPart.getColor().getColor() | otherPart.getColor().getColor());
+                return ColorSet.combine(mainPart.getColor(), otherPart.getColor());
             default:
                 return mainPart.getColor();
         }
@@ -326,34 +323,37 @@ public final class CardRules implements ICardCharacteristics {
         if (!(canBePartnerCommander() && b.canBePartnerCommander())) {
             return false;
         }
-        boolean legal = false;
         if (hasKeyword("Partner") && b.hasKeyword("Partner")) {
-            legal = true; // normal partner commander
+            return true; // normal partner commander
         }
         if (getName().equals(b.getPartnerWith()) && b.getName().equals(getPartnerWith())) {
-            legal = true; // paired partner commander
+            return true; // paired partner commander
         }
-        if (hasKeyword("Friends forever") && b.hasKeyword("Friends forever")) {
-            legal = true; // Stranger Things Secret Lair gimmick partner commander
+
+        if (!this.partnerType.isEmpty() && this.partnerType.equals(b.partnerType)) {
+            return true;
         }
+
         if (hasKeyword("Choose a Background") && b.canBeBackground()
                 || b.hasKeyword("Choose a Background") && canBeBackground()) {
-            legal = true; // commander with background
+            return true; // commander with background
         }
         if (isDoctor() && b.hasKeyword("Doctor's companion")
                 || hasKeyword("Doctor's companion") && b.isDoctor()) {
-            legal = true; // Doctor Who partner commander
+            return true; // Doctor Who partner commander
         }
-        return legal;
+        return false;
     }
 
     public boolean canBePartnerCommander() {
         if (canBeBackground()) {
             return true;
         }
-        return canBeCommander() && (hasKeyword("Partner") || !this.partnerWith.isEmpty() ||
-                hasKeyword("Friends forever") || hasKeyword("Choose a Background") ||
-                hasKeyword("Doctor's companion") || isDoctor());
+        if (!canBeCommander()) {
+            return false;
+        }
+        return hasKeyword("Partner") || !this.partnerWith.isEmpty() || !this.partnerType.isEmpty() ||
+                hasKeyword("Choose a Background") || hasKeyword("Doctor's companion") || isDoctor();
     }
 
     public boolean canBeBackground() {
@@ -361,16 +361,21 @@ public final class CardRules implements ICardCharacteristics {
     }
 
     public boolean isDoctor() {
+        Set<String> subtypes = new HashSet<>();
         for (String type : mainPart.getType().getSubtypes()) {
-            if (!type.equals("Time Lord") && !type.equals("Doctor")) {
-                return false;
-            }
+            subtypes.add(type);
         }
-        return true;
+
+        return subtypes.size() == 2 &&
+                subtypes.contains("Time Lord") &&
+                subtypes.contains("Doctor");
     }
 
     public boolean canBeOathbreaker() {
         CardType type = mainPart.getType();
+        if (mainPart.getOracleText().contains("can be your commander")) {
+            return true;
+        }
         return type.isPlaneswalker();
     }
 
@@ -460,6 +465,53 @@ public final class CardRules implements ICardCharacteristics {
         return this.supportedFunctionalVariants;
     }
 
+    public String getDisplayNameForVariant(String variantName) {
+        if(supportedFunctionalVariants == null || !supportedFunctionalVariants.contains(variantName))
+            return getName();
+
+        ICardFace mainFace = Objects.requireNonNullElse(mainPart.getFunctionalVariant(variantName), mainPart);
+        String mainPartName = mainFace.getDisplayName();
+
+        if(splitType.getAggregationMethod() == CardSplitType.FaceSelectionMethod.COMBINE) {
+            ICardFace otherFace = Objects.requireNonNullElse(otherPart.getFunctionalVariant(variantName), otherPart);
+            String otherPartName = otherFace.getDisplayName();
+            return mainPartName + " // " + otherPartName;
+        }
+        else
+            return mainPartName;
+    }
+
+    /* package */ String findOrCreateVariantForFlavorName(String flavorName, String suggestedVariantName) {
+        Objects.requireNonNull(flavorName);
+        String[] nameParts = flavorName.trim().split("\\s*//\\s*");
+        flavorName = String.join(" // ", nameParts); //Normalize this just in case.
+        if(otherPart != null && nameParts.length < 2)
+            throw new IllegalArgumentException("Tried to assign a single flavor name to a multi-faced card. Use ' // ' as a separator in the flavorName parameter.");
+        if(supportedFunctionalVariants == null)
+            supportedFunctionalVariants = new HashSet<>();
+        for(String variantName : this.supportedFunctionalVariants) {
+            if(getDisplayNameForVariant(variantName).equals(flavorName))
+                return variantName;
+        }
+        String variantName = suggestedVariantName != null ? suggestedVariantName : "FlavorName" + flavorName.hashCode();
+        if(supportedFunctionalVariants.contains(variantName))
+            variantName = variantName + flavorName.hashCode();
+
+        CardFace variantMain = ((CardFace) mainPart).getOrCreateFunctionalVariant(variantName);
+        variantMain.setFlavorName(nameParts[0]);
+        ((CardFace) mainPart).assignMissingFieldsToVariant(variantMain);
+
+        if(otherPart != null) {
+            CardFace variantOther = ((CardFace) otherPart).getOrCreateFunctionalVariant(variantName);
+            variantOther.setFlavorName(nameParts[1]);
+            ((CardFace) otherPart).assignMissingFieldsToVariant(variantOther);
+        }
+
+        supportedFunctionalVariants.add(variantName);
+
+        return variantName;
+    }
+
     public ColorSet getColorIdentity() {
         return colorIdentity;
     }
@@ -481,6 +533,7 @@ public final class CardRules implements ICardCharacteristics {
         private CardSplitType altMode = CardSplitType.None;
         private String meldWith = "";
         private String partnerWith = "";
+        private String partnerType = "";
         private boolean addsWildCardColor = false;
         private int setColorID = 0;
         private String handLife = null;
@@ -522,6 +575,7 @@ public final class CardRules implements ICardCharacteristics {
             this.has = null;
             this.meldWith = "";
             this.partnerWith = "";
+            this.partnerType = "";
             this.addsWildCardColor = false;
             this.normalizedName = "";
             this.supportedFunctionalVariants = null;
@@ -547,6 +601,7 @@ public final class CardRules implements ICardCharacteristics {
             result.setNormalizedName(this.normalizedName);
             result.meldWith = this.meldWith;
             result.partnerWith = this.partnerWith;
+            result.partnerType = this.partnerType;
             result.addsWildCardColor = this.addsWildCardColor;
             result.setColorID = this.setColorID;
             if (!tokens.isEmpty()) {
@@ -618,8 +673,6 @@ public final class CardRules implements ICardCharacteristics {
                         this.altMode = CardSplitType.smartValueOf(value);
                     } else if ("ALTERNATE".equals(key)) {
                         this.curFace = 1;
-                    } else if ("AltName".equals(key)) {
-                        face.setAltName(value);
                     }
                     break;
 
@@ -644,6 +697,11 @@ public final class CardRules implements ICardCharacteristics {
                     }
                     break;
 
+                case 'F':
+                    if("FlavorName".equals(key)) {
+                        face.setFlavorName(value);
+                    }
+
                 case 'H':
                     if ("HandLifeModifier".equals(key)) {
                         handLife = value;
@@ -653,8 +711,11 @@ public final class CardRules implements ICardCharacteristics {
                 case 'K':
                     if ("K".equals(key)) {
                         face.addKeyword(value);
-                        if (value.startsWith("Partner:")) {
+                        if (value.startsWith("Partner with:")) {
                             this.partnerWith = value.split(":")[1];
+                        }
+                        if (value.startsWith("Partner:")) {
+                            this.partnerType = value.split(":")[1];
                         }
                     }
                     break;
@@ -734,7 +795,7 @@ public final class CardRules implements ICardCharacteristics {
                         face.addTrigger(value);
                     } else if ("Types".equals(key)) {
                         face.setType(CardType.parse(value, false));
-                    } else if ("Text".equals(key) && !"no text".equals(value) && StringUtils.isNotBlank(value)) {
+                    } else if ("Text".equals(key) && StringUtils.isNotBlank(value)) {
                         face.setNonAbilityText(value);
                     }
                     break;
@@ -823,6 +884,8 @@ public final class CardRules implements ICardCharacteristics {
         faces[0].assignMissingFields();
         final CardRules result = new CardRules(faces, CardSplitType.None, cah);
 
+        result.unsupported = true;
+
         return result;
     }
 
@@ -835,8 +898,7 @@ public final class CardRules implements ICardCharacteristics {
     }
     public boolean hasStartOfKeyword(final String k, ICardFace cf) {
         for (final String inst : cf.getKeywords()) {
-            final String[] parts = inst.split(":");
-            if ((parts[0]).equalsIgnoreCase(k)) {
+            if (inst.startsWith(k)) {
                 return true;
             }
         }

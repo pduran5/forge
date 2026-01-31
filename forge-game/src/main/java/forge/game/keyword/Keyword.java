@@ -1,8 +1,8 @@
 package forge.game.keyword;
 
-import forge.StaticData;
-import forge.game.card.Card;
+import forge.card.CardSplitType;
 import forge.item.PaperCard;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ public enum Keyword {
     AFFLICT("Afflict", KeywordWithAmount.class, false, "Whenever this creature becomes blocked, defending player loses %d life."),
     AFTERLIFE("Afterlife", KeywordWithAmount.class, false, "When this creature dies, create {%1$d:1/1 white and black Spirit creature token} with flying."),
     AFTERMATH("Aftermath", SimpleKeyword.class, false, "Cast this spell only from your graveyard. Then exile it."),
-    AMPLIFY("Amplify", KeywordWithAmountAndType.class, false, "As this creature enters, put {%d:+1/+1 counter} on it for each %s card you reveal in your hand."),
+    AMPLIFY("Amplify", Amplify.class, false, "As this creature enters, put {%d:+1/+1 counter} on it for each %s card you reveal in your hand."),
     ANNIHILATOR("Annihilator", KeywordWithAmount.class, false, "Whenever this creature attacks, defending player sacrifices {%d:permanent}."),
     ASCEND("Ascend", SimpleKeyword.class, true, "If you control ten or more permanents, you get the city's blessing for the rest of the game."),
     ASSIST("Assist", SimpleKeyword.class, true, "Another player can pay up to %s of this spell's cost."),
@@ -37,7 +37,7 @@ public enum Keyword {
     CHOOSE_A_BACKGROUND("Choose a Background", Partner.class, true, "You can have a Background as a second commander."),
     CIPHER("Cipher", SimpleKeyword.class, true, "Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost."),
     COMPANION("Companion", Companion.class, true, "Reveal your companion from outside the game if your deck meets the companion restriction."),
-    COMPLEATED("Compleated", SimpleKeyword.class, true, "This planeswalker enters with two fewer loyalty counters for each Phyrexian mana symbol life was paid for."),
+    COMPLEATED("Compleated", Compleated.class, true, "This planeswalker enters with two fewer loyalty counters for each Phyrexian mana symbol life was paid for."),
     CONSPIRE("Conspire", SimpleKeyword.class, false, "As an additional cost to cast this spell, you may tap two untapped creatures you control that each share a color with it. If you do, copy it."),
     CONVOKE("Convoke", SimpleKeyword.class, true, "Your creatures can help cast this spell. Each creature you tap while playing this spell reduces its cost by {1} or by one mana of that creature's color."),
     CRAFT("Craft", Craft.class, false, "%s: Return this card transformed under its owner's control. Craft only as a sorcery."),
@@ -59,9 +59,9 @@ public enum Keyword {
     DOCTORS_COMPANION("Doctor's companion", Partner.class, true, "You can have two commanders if the other is the Doctor."),
     DOUBLE_AGENDA("Double agenda", SimpleKeyword.class, false, "Start the game with this conspiracy face down in the command zone and secretly choose two different card names. You may turn this conspiracy face up any time and reveal those names."),
     DOUBLE_STRIKE("Double Strike", SimpleKeyword.class, true, "This creature deals both first-strike and regular combat damage."),
-    DOUBLE_TEAM("Double team", SimpleKeyword.class, true, "When this creature attacks, if it's not a token, conjure a duplicate of it into your hand. Then both cards perpetually lose double team."),
+    DOUBLE_TEAM("Double team", SimpleKeyword.class, false, "When this creature attacks, if it's not a token, conjure a duplicate of it into your hand. Then both cards perpetually lose double team."),
     DREDGE("Dredge", KeywordWithAmount.class, false, "If you would draw a card, instead you may put exactly {%d:card} from the top of your library into your graveyard. If you do, return this card from your graveyard to your hand. Otherwise, draw a card."),
-    ECHO("Echo", KeywordWithCost.class, false, "At the beginning of your upkeep, if this permanent came under your control since the beginning of your last upkeep, sacrifice it unless you pay %s."),
+    ECHO("Echo", KeywordWithCost.class, false, "At the beginning of your upkeep, if this permanent came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost."),
     EMBALM("Embalm", KeywordWithCost.class, false, "%s, Exile this card from your graveyard: Create a token that's a copy of this card, except it's white, it has no mana cost, and it's a Zombie in addition to its other types. Embalm only as a sorcery."),
     EMERGE("Emerge", Emerge.class, false, "You may cast this spell by sacrificing {1:%2$s} and paying the emerge cost reduced by that %2$s's mana value."),
     ENCHANT("Enchant", KeywordWithType.class, false, "Target a %s as you cast this. This card enters attached to that %s."),
@@ -81,6 +81,7 @@ public enum Keyword {
     FABRICATE("Fabricate", KeywordWithAmount.class, false, "When this creature enters, put {%1$d:+1/+1 counter} on it, or create {%1$d:1/1 colorless Servo artifact creature token}."),
     FADING("Fading", KeywordWithAmount.class, false, "This permanent enters with {%d:fade counter} on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it."),
     FEAR("Fear", SimpleKeyword.class, true, "This creature can't be blocked except by artifact creatures and/or black creatures."),
+    FIREBENDING("Firebending", Firebending.class, false, "Whenever this creature attacks, add %s. This mana lasts until end of combat."),
     FIRST_STRIKE("First Strike", SimpleKeyword.class, true, "This creature deals combat damage before creatures without first strike."),
     FLANKING("Flanking", SimpleKeyword.class, false, "Whenever this creature becomes blocked by a creature without flanking, the blocking creature gets -1/-1 until end of turn."),
     FLASH("Flash", SimpleKeyword.class, true, "You may cast this spell any time you could cast an instant."),
@@ -91,14 +92,13 @@ public enum Keyword {
     FORTIFY("Fortify", KeywordWithCost.class, false, "%s: Attach to target land you control. Fortify only as a sorcery."),
     FREERUNNING("Freerunning", KeywordWithCost.class, false, "You may cast this spell for its freerunning cost if you dealt combat damage to a player this turn with an Assassin or commander."),
     FRENZY("Frenzy", KeywordWithAmount.class, false, "Whenever this creature attacks and isn't blocked, it gets +%d/+0 until end of turn."),
-    FRIENDS_FOREVER("Friends forever", Partner.class, true, "You can have two commanders if both have friends forever."),
     FUSE("Fuse", SimpleKeyword.class, true, "You may cast one or both halves of this card from your hand."),
     GIFT("Gift", SimpleKeyword.class, true, "You may promise an opponent a gift as you cast this spell. If you do, when it enters, they %s."),
     GRAFT("Graft", KeywordWithAmount.class, false, "This permanent enters with {%d:+1/+1 counter} on it. Whenever another creature enters, you may move a +1/+1 counter from this permanent onto it."),
     GRAVESTORM("Gravestorm", SimpleKeyword.class, false, "When you cast this spell, copy it for each permanent that was put into a graveyard from the battlefield this turn. If the spell has any targets, you may choose new targets for any of the copies."),
     HARMONIZE("Harmonize", KeywordWithCost.class, false, "You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by {X}, where X is its power. Then exile this spell."),
     HASTE("Haste", SimpleKeyword.class, true, "This creature can attack and {T} as soon as it comes under your control."),
-    HAUNT("Haunt", SimpleKeyword.class, false, "When this is put into a graveyard, exile it haunting target creature."),
+    HAUNT("Haunt", SimpleKeyword.class, false, "When this is put into a graveyard from the battlefield, exile it haunting target creature."),
     HEXPROOF("Hexproof", Hexproof.class, true, "This can't be the target of %s spells or abilities your opponents control."),
     HIDEAWAY("Hideaway", KeywordWithAmount.class, false, "When this permanent enters, look at the top {%d:card} of your library, exile one face down, then put the rest on the bottom of your library."),
     HIDDEN_AGENDA("Hidden agenda", SimpleKeyword.class, false, "Start the game with this conspiracy face down in the command zone and secretly choose a card name. You may turn this conspiracy face up any time and reveal that name."),
@@ -118,7 +118,7 @@ public enum Keyword {
     LIVING_METAL("Living metal", SimpleKeyword.class, true, "During your turn, this Vehicle is also a creature."),
     LIVING_WEAPON("Living Weapon", SimpleKeyword.class, true, "When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it."),
     MADNESS("Madness", KeywordWithCost.class, false, "If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard."),
-    MAYHEM("Mayhem", KeywordWithCost.class, false, "You may cast this card from your graveyard for %s if you discarded it this turn. Timing rules still apply."),
+    MAYHEM("Mayhem", Mayhem.class, false, "You may cast this card from your graveyard for %s if you discarded it this turn. Timing rules still apply."),
     MELEE("Melee", SimpleKeyword.class, false, "Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat."),
     MENTOR("Mentor", SimpleKeyword.class, false, "Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power."),
     MENACE("Menace", SimpleKeyword.class, true, "This creature can't be blocked except by two or more creatures."),
@@ -140,6 +140,7 @@ public enum Keyword {
     OFFSPRING("Offspring", KeywordWithCost.class, false, "You may pay an additional %s as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it."),
     OVERLOAD("Overload", KeywordWithCost.class, false, "You may cast this spell for its overload cost. If you do, change its text by replacing all instances of \"target\" with \"each.\""),
     PARTNER("Partner", Partner.class, true, "You can have two commanders if both have partner."),
+    PARTNER_WITH("Partner with", KeywordWithType.class, false, "When this creature enters, target player may put %s into their hand from their library, then shuffle."),
     PERSIST("Persist", SimpleKeyword.class, false, "When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it."),
     PHASING("Phasing", SimpleKeyword.class, true, "This phases in or out before you untap during each of your untap steps. While it's phased out, it's treated as though it doesn't exist."),
     PLOT("Plot", KeywordWithCost.class, false, "You may pay %s and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery."),
@@ -164,10 +165,11 @@ public enum Keyword {
     RIOT("Riot", SimpleKeyword.class, false, "This creature enters with your choice of a +1/+1 counter or haste."),
     RIPPLE("Ripple", KeywordWithAmount.class, false, "When you cast this spell, you may reveal the top {%d:card} of your library. You may cast any of those cards with the same name as this spell without paying their mana costs. Put the rest on the bottom of your library in any order."),
     SADDLE("Saddle", KeywordWithAmount.class, false, "Tap any number of other creatures you control with total power %1$d or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery."),
+    SCAVENGE("Scavenge", KeywordWithCost.class, false, "%s, Exile this card from your graveyard: Put a number of +1/+1 counters equal to this card's power on target creature. Scavenge only as a sorcery."),
     SHADOW("Shadow", SimpleKeyword.class, true, "This creature can block or be blocked by only creatures with shadow."),
     SHROUD("Shroud", SimpleKeyword.class, true, "This can't be the target of spells or abilities."),
     SKULK("Skulk", SimpleKeyword.class, true, "This creature can't be blocked by creatures with greater power."),
-    SCAVENGE("Scavenge", KeywordWithCost.class, false, "%s, Exile this card from your graveyard: Put a number of +1/+1 counters equal to this card's power on target creature. Scavenge only as a sorcery."),
+    SNEAK("Sneak", KeywordWithCost.class, false, "You may cast this spell for %s if you also return an unblocked attacker you control to hand during the declare blockers step."),
     SOULBOND("Soulbond", SimpleKeyword.class, true, "You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them."),
     SOULSHIFT("Soulshift", KeywordWithAmount.class, false, "When this creature dies, you may return target Spirit card with mana value %d or less from your graveyard to your hand."),
     SPACE_SCULPTOR("Space sculptor", SimpleKeyword.class, true, "CARDNAME divides the battlefield into alpha, beta, and gamma sectors. If a creature isn't assigned to a sector, its controller assigns it to one. Opponents assign first."),
@@ -192,13 +194,13 @@ public enum Keyword {
     TRANSFIGURE("Transfigure", KeywordWithCost.class, false, "%s, Sacrifice this creature: Search your library for a creature card with the same mana value as this creature and put that card onto the battlefield, then shuffle. Transfigure only as a sorcery."),
     TRANSMUTE("Transmute", KeywordWithCost.class, false, "%s, Discard this card: Search your library for a card with the same mana value as this card, reveal it, and put it into your hand, then shuffle. Transmute only as a sorcery."),
     TRIBUTE("Tribute", KeywordWithAmount.class, false, "As this creature enters, an opponent of your choice may put {%d:+1/+1 counter} on it."),
-    TYPECYCLING("TypeCycling", KeywordWithCostAndType.class, false, "%s, Discard this card: Search your library for a %s card, reveal it, put it into your hand, then shuffle."),
+    TYPECYCLING("TypeCycling", KeywordWithCostAndType.class, false, "%s, Discard this card: Search your library for %s, reveal it, put it into your hand, then shuffle."),
     UMBRA_ARMOR("Umbra armor", SimpleKeyword.class, true, "If enchanted permanent would be destroyed, instead remove all damage marked on it and destroy this Aura."),
     UNDAUNTED("Undaunted", SimpleKeyword.class, false, "This spell costs {1} less to cast for each opponent."),
     UNDYING("Undying", SimpleKeyword.class, false, "When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it."),
     UNEARTH("Unearth", KeywordWithCost.class, false, "%s: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery."),
     UNLEASH("Unleash", SimpleKeyword.class, false, "You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it."),
-    VANISHING("Vanishing", KeywordWithAmount.class, false, "This permanent enters with {%d:time counter} on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it."),
+    VANISHING("Vanishing", Vanishing.class, false, "This permanent enters with {%d:time counter} on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it."),
     VIGILANCE("Vigilance", SimpleKeyword.class, true, "Attacking doesn't cause this creature to tap."),
     WARD("Ward", KeywordWithCost.class, false, "Whenever this permanent becomes the target of a spell or ability an opponent controls, counter it unless that player pays %s."),
     WARP("Warp", KeywordWithCost.class, false, "You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn."),
@@ -222,7 +224,7 @@ public enum Keyword {
         displayName = displayName0;
     }
 
-    public static KeywordInterface getInstance(String k) {
+    private static Pair<Keyword, String> getKeywordDetails(String k) {
         Keyword keyword = Keyword.UNDEFINED;
         String details = k;
         // try to get real part
@@ -254,15 +256,19 @@ public enum Keyword {
             keyword = smartValueOf(k);
             details = "";
         }
+        return Pair.of(keyword, details);
+    }
+
+    public static KeywordInterface getInstance(String k) {
+        Pair<Keyword, String> p = getKeywordDetails(k);
 
         KeywordInstance<?> inst;
         try {
-            inst = keyword.type.getConstructor().newInstance();
+            inst = p.getKey().type.getConstructor().newInstance();
+        } catch (Exception e) {
+            inst = new SimpleKeyword();
         }
-        catch (Exception e) {
-            inst = new UndefinedKeyword();
-        }
-        inst.initialize(k, keyword, details);
+        inst.initialize(k, p.getKey(), p.getValue());
         return inst;
     }
 
@@ -277,34 +283,42 @@ public enum Keyword {
         return keywords;
     }
 
+    private static Keyword get(String k) {
+        if (k == null || k.isEmpty())
+            return Keyword.UNDEFINED;
+
+        return getKeywordDetails(k).getKey();
+    }
+
     private static final Map<String, Set<Keyword>> cardKeywordSetLookup = new HashMap<>();
 
     public static Set<Keyword> getKeywordSet(PaperCard card) {
-        String key = card.getName();
-        Set<Keyword> keywordSet = cardKeywordSetLookup.get(key);
+        String name = card.getName();
+        Set<Keyword> keywordSet = cardKeywordSetLookup.get(name);
         if (keywordSet == null) {
-            keywordSet = new HashSet<>();
-            for (KeywordInterface inst : Card.getCardForUi(card).getKeywords()) {
-                final Keyword keyword = inst.getKeyword();
-                if (keyword != Keyword.UNDEFINED) {
-                    keywordSet.add(keyword);
+            CardSplitType cardSplitType = card.getRules().getSplitType();
+            keywordSet = EnumSet.noneOf(Keyword.class);
+            if (cardSplitType != CardSplitType.None && cardSplitType != CardSplitType.Split) {
+                if (card.getRules().getOtherPart() != null) {
+                    if (card.getRules().getOtherPart().getKeywords() != null) {
+                        for (String key : card.getRules().getOtherPart().getKeywords()) {
+                            Keyword keyword = get(key);
+                            if (!Keyword.UNDEFINED.equals(keyword))
+                                keywordSet.add(keyword);
+                        }
+                    }
                 }
             }
-            cardKeywordSetLookup.put(card.getName(), keywordSet);
+            if (card.getRules().getMainPart().getKeywords() != null) {
+                for (String key : card.getRules().getMainPart().getKeywords()) {
+                    Keyword keyword = get(key);
+                    if (!Keyword.UNDEFINED.equals(keyword))
+                        keywordSet.add(keyword);
+                }
+            }
+            cardKeywordSetLookup.put(name, keywordSet);
         }
         return keywordSet;
-    }
-
-    public static Runnable getPreloadTask() {
-        if (cardKeywordSetLookup.size() < 10000) { //allow preloading even if some but not all cards loaded
-            return () -> {
-                final Collection<PaperCard> cards = StaticData.instance().getCommonCards().getUniqueCards();
-                for (PaperCard card : cards) {
-                    getKeywordSet(card);
-                }
-            };
-        }
-        return null;
     }
 
     public static Keyword smartValueOf(String value) {

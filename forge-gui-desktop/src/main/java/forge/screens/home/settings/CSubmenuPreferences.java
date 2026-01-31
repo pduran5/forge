@@ -168,6 +168,7 @@ public enum CSubmenuPreferences implements ICDoc {
         lstControls.add(Pair.of(view.getCbLoadArchivedFormats(), FPref.LOAD_ARCHIVED_FORMATS));
         lstControls.add(Pair.of(view.getCbSmartCardArtSelectionOpt(), FPref.UI_SMART_CARD_ART));
         lstControls.add(Pair.of(view.getCbShowDraftRanking(), FPref.UI_OVERLAY_DRAFT_RANKING));
+        lstControls.add(Pair.of(view.getCbAiPicker(), FPref.UI_ENABLE_AI_PICKER));
 
 
         for(final Pair<JCheckBox, FPref> kv : lstControls) {
@@ -470,7 +471,7 @@ public enum CSubmenuPreferences implements ICDoc {
     private void initializeMusicSetsComboBox() {
         final FPref userSetting = FPref.UI_CURRENT_MUSIC_SET;
         final FComboBoxPanel<String> panel = this.view.getMusicSetsComboBoxPanel();
-        final FComboBox<String> comboBox = createComboBox(SoundSystem.instance.getAvailableMusicSets(), userSetting);
+        final FComboBox<String> comboBox = createComboBox(SoundSystem.getAvailableMusicSets(), userSetting);
         final String selectedItem = this.prefs.getPref(userSetting);
         panel.setComboBox(comboBox, selectedItem);
         comboBox.addActionListener(actionEvent -> {

@@ -28,7 +28,7 @@ import java.util.Locale;
  * @author Clemens Koza
  * @version V0.0 17.02.2010
  */
-public enum CounterEnumType {
+public enum CounterEnumType implements CounterType {
 
     M1M1("-1/-1", "-1/-1", 255, 110, 106),
     P1P1("+1/+1", "+1/+1", 96, 226, 23),
@@ -90,6 +90,8 @@ public enum CounterEnumType {
     COLLECTION("CLLCT", 255, 215, 0),
 
     COMPONENT("COMPN", 224, 160, 48),
+
+    CONQUEROR("CONQR", 225, 210, 25),
 
     CONTESTED("CONTES", 255, 76, 2),
 
@@ -167,7 +169,11 @@ public enum CounterEnumType {
 
     FILIBUSTER("FLBTR", 255, 179, 119),
 
+    FILM("FILM", 255, 255, 255),
+
     FINALITY("FINAL", 255, 255, 255),
+
+    FIRE("FIRE", 240, 30, 35),
 
     FLAME("FLAME", 255, 143, 43),
     
@@ -315,6 +321,8 @@ public enum CounterEnumType {
 
     PAIN("PAIN", 255, 108, 111),
 
+    PALLIATION("PALLI", 114, 243, 250),
+
     PARALYZATION("PRLYZ", 220, 201, 0),
 
     PETAL("PETAL", 255, 162, 216),
@@ -332,6 +340,8 @@ public enum CounterEnumType {
     PHYLACTERY("PHYLA", 117, 219, 153),
 
     PHYRESIS("PHYRE", 125, 97, 128),
+
+    PLAN("PLAN", 20, 35, 235),
 
     POINT("POINT", 153, 255, 130),
 
@@ -477,24 +487,6 @@ public enum CounterEnumType {
 
     TICKET("TICKET"),
 
-    // Keyword Counters
-/*
-    FLYING("Flying"),
-    FIRSTSTRIKE("First Strike"),
-    DOUBLESTRIKE("Double Strike"),
-    DEATHTOUCH("Deathtouch"),
-    DECAYED("Decayed"),
-    HASTE("Haste"),
-    HEXPROOF("Hexproof"),
-    INDESTRUCTIBLE("Indestructible"),
-    LIFELINK("Lifelink"),
-    MENACE("Menace"),
-    REACH("Reach"),
-    TRAMPLE("Trample"),
-    VIGILANCE("Vigilance"),
-    SHADOW("Shadow"),
-    EXALTED("Exalted")
-//*/
     ;
 
     private String name, counterOnCardDisplayName;
@@ -552,5 +544,15 @@ public enum CounterEnumType {
     }
 
     public static final ImmutableList<CounterEnumType> values = ImmutableList.copyOf(values());
+
+    @Override
+    public boolean is(CounterEnumType eType) {
+        return this == eType;
+    }
+
+    @Override
+    public boolean isKeywordCounter() {
+        return false;
+    }
 
 }

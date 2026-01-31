@@ -175,6 +175,7 @@ public class ForgePreferences extends PreferencesStore<ForgePreferences.FPref> {
         UI_FOR_TOUCHSCREN("false"),
         UI_SWITCH_STATES_DECKVIEW("Switch back on hover"),
         UI_ORDER_HAND("false"),
+        UI_ENABLE_AI_PICKER("false"),
 
         UI_VIBRATE_ON_LIFE_LOSS("true"),
         UI_VIBRATE_ON_LONG_PRESS("true"),
@@ -217,6 +218,7 @@ public class ForgePreferences extends PreferencesStore<ForgePreferences.FPref> {
 
         LOAD_CARD_SCRIPTS_LAZILY ("false"),
         LOAD_ARCHIVED_FORMATS ("false"),
+        PRELOAD_CUSTOM_DRAFTS ("false"),
 
         DECK_DEFAULT_CARD_LIMIT ("4"),
         DECKGEN_SINGLETONS ("false"),
@@ -283,7 +285,9 @@ public class ForgePreferences extends PreferencesStore<ForgePreferences.FPref> {
         SHORTCUT_AUTOYIELD_ALWAYS_NO ("78"),
         SHORTCUT_MACRO_RECORD ("16 82"),
         SHORTCUT_MACRO_NEXT_ACTION ("16 50"),
-        SHORTCUT_CARD_ZOOM("90");
+        SHORTCUT_CARD_ZOOM("90"),
+
+        LAST_IMPORTED_CUBE_ID("");
 
         private final String strDefaultVal;
 
